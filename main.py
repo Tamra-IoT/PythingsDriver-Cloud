@@ -2,6 +2,7 @@
 from config import debug_enabled
 import read_env_file
 import paho.mqtt.client as mqtt
+import json
 import time
 class tamra_node:
     def __init__(self, env):
@@ -19,6 +20,11 @@ class tamra_node:
         self.settings=self.preamble+'settings'
         self.commands=self.preamble+'commands'
         self.state=self.preamble+'state'
+        self.settings_frame=json.dumps({})
+        self.inputs_frame=json.dumps({})
+        self.outputs_frame=json.dumps({})
+        self.commands_frame=json.dumps({})
+        self.state_frame=json.dumps({})
         # Topics=['inputs','outputs','settings', 'commands','state']
 
    
@@ -31,17 +37,21 @@ class tamra_node:
             message=str(msg.payload)
             begin = message.find("{")
             end = message.rfind("}")
-            # NodeFrames[msg.topic]=json.loads(message[begin:end+1])
-            print("*"*100)
-            print("received")
-            print(msg.topic)  
-            print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))    
-            print("*"*100)
-            # if str(msg.topic) == self.inputs:
-            #     print("catch inputs")
-            #     ReceivedFrames["inputs"]=1
-            # if msg.topic == self.outputs:
-            #     ReceivedFrames["outputs"]=1 
+            message_json=json.loads(message[begin:end+1]) 
+            # print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))    
+            if str(msg.topic) == self.inputs:
+                self.inputs_frame=message_json
+            elif msg.topic == self.outputs:
+                self.outputs_frame=message_json
+            elif msg.topic == self.commands:
+                self.commands_frame= message_json
+            elif msg.topic == self.state:
+                self.state_frame= message_json
+            elif msg.topic == self.settings:
+                self.settings_frame= message_json
+
+
+####################################################
         client = mqtt.Client()
         client.username_pw_set(self.MQTT_USERNAME, self.MQTT_PASSWORD)
         client.on_subscribe = on_subscribe
@@ -63,9 +73,12 @@ class tamra_node:
 
 smart_home=tamra_node(read_env_file.env_vars)
 smart_home.connect_tamra_broker()
+print("smart_home.settings_frame")
+print(smart_home.settings_frame)
 
 while(1):
     time.sleep(5)
+    print(smart_home.settings_frame)
 # print(smart_home.env)
 # print(smart_home.BACKEND_URL)
 # print(smart_home.MQTT_PORT)
@@ -75,3 +88,4 @@ while(1):
 # print(smart_home.ACTIVATION_CODE)
 # print(smart_home.NODE_ID)
 # print(smart_home.inputs)
+
