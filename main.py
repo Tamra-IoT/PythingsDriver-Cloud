@@ -4,6 +4,7 @@ import read_env_file
 import paho.mqtt.client as mqtt
 import json
 import time
+from ArduinoUNO import *
 class tamra_node:
     def __init__(self, env):
         self.env = env
@@ -63,7 +64,22 @@ class tamra_node:
         client.subscribe(self.commands, qos=1)
         client.loop_start()
 
-        
+    # def digitalRead(self, pin):
+
+    def digitalWrite(self,pin,value):
+        JSON_frame= self.outputs_frame
+        print(JSON_frame)
+        if pin in JSON_frame:
+            print("Key "+pin+" is present in the dictionary")
+            command_frame='{"out":{}}'
+            frame=json.loads(command_frame)
+            frame["out"][pin]=value
+            print(frame)
+
+        else:
+            print("Key "+pin+" is not present in the dictionary")
+
+
 
 
     def say_hello(self):
@@ -77,8 +93,13 @@ print("smart_home.settings_frame")
 print(smart_home.settings_frame)
 
 while(1):
+    smart_home.digitalWrite(D3,1)
+    # print(smart_home.settings_frame)
     time.sleep(5)
-    print(smart_home.settings_frame)
+   
+    settings= smart_home.settings_frame
+    # print(settings["A0"])
+    
 # print(smart_home.env)
 # print(smart_home.BACKEND_URL)
 # print(smart_home.MQTT_PORT)
@@ -87,5 +108,5 @@ while(1):
 # print(smart_home.MQTT_PASSWORD)
 # print(smart_home.ACTIVATION_CODE)
 # print(smart_home.NODE_ID)
-# print(smart_home.inputs)
+    print(smart_home.commands_frame)
 
