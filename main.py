@@ -26,43 +26,41 @@ class tamra_node:
         self.outputs_frame=json.dumps({})
         self.commands_frame=json.dumps({})
         self.state_frame=json.dumps({})
+        self.client = mqtt.Client()
+       
         # Topics=['inputs','outputs','settings', 'commands','state']
 
-   
+    def on_subscribe(self,client, userdata, mid, granted_qos):
+        print("-")
 
-    def connect_tamra_broker(self):
-        def on_subscribe(client, userdata, mid, granted_qos):
-            print("-")
-
-        def on_message(client, userdata, msg):
-            message=str(msg.payload)
-            begin = message.find("{")
-            end = message.rfind("}")
-            message_json=json.loads(message[begin:end+1]) 
-            # print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))    
-            if str(msg.topic) == self.inputs:
-                self.inputs_frame=message_json
-            elif msg.topic == self.outputs:
-                self.outputs_frame=message_json
-            elif msg.topic == self.commands:
-                self.commands_frame= message_json
-            elif msg.topic == self.state:
-                self.state_frame= message_json
-            elif msg.topic == self.settings:
-                self.settings_frame= message_json
+    def on_message(self,client, userdata, msg):
+        message=str(msg.payload)
+        begin = message.find("{")
+        end = message.rfind("}")
+        message_json=json.loads(message[begin:end+1]) 
+        # print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))    
+        if str(msg.topic) == self.inputs:
+            self.inputs_frame=message_json
+        elif msg.topic == self.outputs:
+            self.outputs_frame=message_json
+        elif msg.topic == self.commands:
+            self.commands_frame= message_json
+        elif msg.topic == self.state:
+            self.state_frame= message_json
+        elif msg.topic == self.settings:
+            self.settings_frame= message_json
 
 
-####################################################
-        client = mqtt.Client()
-        client.username_pw_set(self.MQTT_USERNAME, self.MQTT_PASSWORD)
-        client.on_subscribe = on_subscribe
-        client.on_message = on_message
-        client.connect(self.MQTT_URL, self.MQTT_PORT)
-        client.subscribe(self.settings, qos=1)
-        client.subscribe(self.inputs, qos=1)
-        client.subscribe(self.outputs, qos=1)
-        client.subscribe(self.commands, qos=1)
-        client.loop_start()
+    def connect_tamra_broker(self): 
+        self.client.username_pw_set(self.MQTT_USERNAME, self.MQTT_PASSWORD)
+        self.client.on_subscribe = self.on_subscribe
+        self.client.on_message = self.on_message
+        self.client.connect(self.MQTT_URL, self.MQTT_PORT)
+        self.client.subscribe(self.settings, qos=1)
+        self.client.subscribe(self.inputs, qos=1)
+        self.client.subscribe(self.outputs, qos=1)
+        self.client.subscribe(self.commands, qos=1)
+        self.client.loop_start()
 
     # def digitalRead(self, pin):
 
