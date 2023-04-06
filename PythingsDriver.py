@@ -1,10 +1,9 @@
 # debug_enabled = True  # Set to False to disable debugging messages
 from config import debug_enabled
-import read_env_file
 import paho.mqtt.client as mqtt
 import json
-import time
-from ArduinoUNO import *
+
+
 class tamra_node:
     def __init__(self, env):
         self.env = env
@@ -75,7 +74,7 @@ class tamra_node:
             self.client.publish(self.commands, json.dumps(frame) , qos=1)
 
         else:
-            print("Key "+pin+" is not present in the dictionary")
+            print(f"Key {pin} is not defined as a PWM pin")
 
 
     def digitalWrite(self,pin,value):
@@ -89,7 +88,7 @@ class tamra_node:
             self.client.publish(self.commands, json.dumps(frame) , qos=1)
 
         else:
-            print("Key "+pin+" is not present in the dictionary")
+            print(f"Key {pin} is not defined as a digital output")
             # return NULL
 
 
@@ -99,7 +98,7 @@ class tamra_node:
         if pin in JSON_frame:
             return JSON_frame[pin]
         else:
-            print("Key "+pin+" is not present in the dictionary")
+            print(f"Key {pin} is not defined as a digital output")
     
     def analogRead(self,pin):
         JSON_frame= self.inputs_frame
@@ -107,7 +106,7 @@ class tamra_node:
         if pin in JSON_frame:
             return JSON_frame[pin]
         else:
-            print("Key "+pin+" is not present in the dictionary")
+            print(f"Key {pin} is not define as an analog")
 
     def pinMode(self, pin, mode, interval=60):
         if interval < 3:
