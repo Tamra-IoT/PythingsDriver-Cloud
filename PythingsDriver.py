@@ -3,7 +3,6 @@ from config import debug_enabled
 import paho.mqtt.client as mqtt
 import json
 
-
 class tamra_node:
     def __init__(self, env):
         self.env = env
@@ -26,6 +25,8 @@ class tamra_node:
         self.commands_frame=json.dumps({})
         self.state_frame=json.dumps({})
         self.client = mqtt.Client()
+        self.getCommands=False
+        self.getOutputs=False
        
         # Topics=['inputs','outputs','settings', 'commands','state']
 
@@ -37,13 +38,16 @@ class tamra_node:
         begin = message.find("{")
         end = message.rfind("}")
         message_json=json.loads(message[begin:end+1]) 
+        print(message_json)
         # print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))    
         if str(msg.topic) == self.inputs:
             self.inputs_frame=message_json
         elif msg.topic == self.outputs:
             self.outputs_frame=message_json
+            self.getOutputs=True
         elif msg.topic == self.commands:
             self.commands_frame= message_json
+            self.getCommands=True
         elif msg.topic == self.state:
             self.state_frame= message_json
         elif msg.topic == self.settings:
@@ -72,6 +76,10 @@ class tamra_node:
             frame["out"][pin]=value
             print(frame)
             self.client.publish(self.commands, json.dumps(frame) , qos=1)
+            while not self.getOutputs:
+                pass
+            self.getOutputs=False
+
 
         else:
             print(f"Key {pin} is not defined as a PWM pin")
@@ -85,8 +93,11 @@ class tamra_node:
             frame=json.loads(command_frame)
             frame["out"][pin]=value
             print(frame)
+            
             self.client.publish(self.commands, json.dumps(frame) , qos=1)
-
+            while not self.getOutputs:
+                pass
+            self.getOutputs=False
         else:
             print(f"Key {pin} is not defined as a digital output")
             # return NULL
@@ -102,7 +113,7 @@ class tamra_node:
     
     def analogRead(self,pin):
         JSON_frame= self.inputs_frame
-        print(JSON_frame)
+        # print(JSON_frame)
         if pin in JSON_frame:
             return JSON_frame[pin]
         else:

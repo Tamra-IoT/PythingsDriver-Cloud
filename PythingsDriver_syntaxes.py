@@ -4,7 +4,6 @@ import time
 import pygame
 from ArduinoUNO import *
 # print(read_env_file.env_vars)
-motion_detector=A0
 
 smart_home=tamra_node(read_env_file.env_vars)
 smart_home.connect_tamra_broker()
@@ -12,19 +11,7 @@ smart_home.connect_tamra_broker()
 # print(smart_home.settings_frame)
 # Pause for 2 seconds
 pygame.time.wait(2000)
-# print(smart_home.settings_frame)
-
-while True:
-    motion_state=smart_home.analogRead(motion_detector)
-    power_led=smart_home.outputs_frame[A2]
-    if motion_state>500 and power_led == 0:
-        smart_home.digitalWrite(A2,1)
-        pygame.time.wait(3000)
-    elif power_led >= 1:
-        smart_home.digitalWrite(A2,0)
-    pygame.time.wait(3000)
-    
-
+print(smart_home.settings_frame)
 # smart_home.pinMode(D9, OUTPUT)
 # smart_home.pinMode(D5, PWM,5)
 # smart_home.pinMode(A0, ANALOG,5)
@@ -32,11 +19,11 @@ while True:
 # time.sleep(10)
 # print(smart_home.settings_frame)
 # time.sleep(2)
-# smart_home.digitalWrite(A2,1)
-# # time.sleep(5)
-# # Pause for 2 seconds
-# pygame.time.wait(2000)
-# smart_home.digitalWrite(A2,0)
+smart_home.digitalWrite(A2,1)
+# time.sleep(5)
+# Pause for 2 seconds
+pygame.time.wait(2000)
+smart_home.digitalWrite(A2,0)
 # time.sleep(2)
 # smart_home.digitalWrite(D3,0)
 # time.sleep(2)
