@@ -16,3 +16,8 @@ A2="A2"
 A3="A3"
 A4="A4"
 A5="A5"
+##############
+PWM='p'
+ANALOG='a'
+OUTPUT='o'
+INPUT='i'
