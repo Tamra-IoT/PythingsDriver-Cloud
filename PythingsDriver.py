@@ -23,6 +23,7 @@ class tamra_node:
         self.inputs_frame=json.dumps({})
         self.outputs_frame=json.dumps({})
         self.commands_frame=json.dumps({})
+        self.preparecommands_frame=json.dumps({})
         self.state_frame=json.dumps({})
         self.client = mqtt.Client()
         self.getCommands=False
@@ -101,6 +102,28 @@ class tamra_node:
         else:
             print(f"Key {pin} is not defined as a digital output")
             # return NULL
+
+    def prepare_digitalWrite(self,pin,value):
+            JSON_frame= self.outputs_frame
+            frame = json.loads(self.preparecommands_frame)
+            print(JSON_frame)
+            if pin in JSON_frame:
+                frame[pin]=value
+                self.preparecommands_frame=json.dumps(frame)
+            else:
+                print(f"Key {pin} is not defined as a digital output")
+                # return NULL
+    def sendCommandsFrame(self): 
+        command_frame='{"out":{}}'
+        frame=json.loads(command_frame)
+        frame["out"]=json.loads(self.preparecommands_frame) 
+        print(frame)     
+        self.client.publish(self.commands, json.dumps(frame) , qos=1)
+        while not self.getOutputs:
+            pass
+        self.getOutputs=False
+        
+
 
 
     def digitalRead(self,pin):
