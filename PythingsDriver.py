@@ -2,7 +2,7 @@
 from config import debug_enabled
 import paho.mqtt.client as mqtt
 import json
-
+import time
 class tamra_node:
     def __init__(self, env):
         self.env = env
@@ -94,10 +94,12 @@ class tamra_node:
             frame=json.loads(command_frame)
             frame["out"][pin]=value
             print(frame)
-            
-            self.client.publish(self.commands, json.dumps(frame) , qos=1)
             while not self.getOutputs:
-                pass
+                self.client.publish(self.commands, json.dumps(frame) , qos=1)
+                start_time = time.time()   
+                duration =3
+                while (time.time() - start_time) < duration:
+                    pass
             self.getOutputs=False
         else:
             print(f"Key {pin} is not defined as a digital output")
@@ -117,10 +119,14 @@ class tamra_node:
         command_frame='{"out":{}}'
         frame=json.loads(command_frame)
         frame["out"]=json.loads(self.preparecommands_frame) 
-        print(frame)     
-        self.client.publish(self.commands, json.dumps(frame) , qos=1)
+        print(frame) 
         while not self.getOutputs:
-            pass
+            self.client.publish(self.commands, json.dumps(frame) , qos=1)
+        ###timer
+            start_time = time.time()   
+            duration =3
+            while (time.time() - start_time) < duration:
+                pass
         self.getOutputs=False
         
 
