@@ -1,17 +1,33 @@
 from PythingsDriver import tamra_node
-import read_env_file
+import env
 import time
 import pygame
 from ArduinoUNO import *
+import os
 # print(read_env_file.env_vars)
 buzzerPort=D3
+buzzerPort2=D5
 motion_detector=A0
 rain_detector=D7
 smoke_sensor=A3 #need to change
 RED_LED=D4
 motor_door=D11
-smart_home=tamra_node(read_env_file.env_vars)
+
+# Define the path to the .env file (assuming it is in the same directory as this script)
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+
+# Read the .env file and collect its attributes
+env_vars = env.read_env_file(env_path)
+
+smart_home=tamra_node(env_vars)
 smart_home.connect_tamra_broker()
+
+env_path = os.path.join(os.path.dirname(__file__), '.env1')
+# Read the .env file and collect its attributes
+env_vars = env.read_env_file(env_path)
+
+node2=tamra_node(env_vars)
+node2.connect_tamra_broker()
 # print("smart_home.settings_frame")
 # print(smart_home.settings_frame)
 # Pause for 2 seconds
@@ -53,6 +69,12 @@ while True:
         pygame.time.wait(3000)
     elif smoke_state > 1000 and buffer_state > 0:
         smart_home.digitalWrite(buzzerPort,0)
+##################################
+    if smoke_state < 800 and buffer_state == 0:
+        node2.digitalWrite(buzzerPort2,100)
+        pygame.time.wait(3000)
+    elif smoke_state > 1000 and buffer_state > 0:
+            node2.digitalWrite(buzzerPort2,0)
 
     pygame.time.wait(3000)
     
