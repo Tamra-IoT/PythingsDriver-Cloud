@@ -3,8 +3,11 @@ from config import debug_enabled
 import paho.mqtt.client as mqtt
 import json
 import time
-class tamra_node:
-    def __init__(self, env):
+class tamra_node(mqtt.Client):
+    # def __init__(self, env):
+    def __init__(self,env, client_id="", clean_session=True, userdata=None, protocol=mqtt.MQTTv311):
+        super().__init__(client_id, clean_session, userdata, protocol)
+        self._protocol = protocol  # Set the _protocol attribute    
         self.env = env
         self.BACKEND_URL=env["BACKEND_URL"]
         self.MQTT_URL=env["MQTT_URL"]
@@ -25,7 +28,7 @@ class tamra_node:
         self.commands_frame=json.dumps({})
         self.preparecommands_frame=json.dumps({})
         self.state_frame=json.dumps({})
-        self.client = mqtt.Client()
+        # self.client = mqtt.Client()
         self.getCommands=False
         self.getOutputs=False
        
@@ -56,15 +59,15 @@ class tamra_node:
 
 
     def connect_tamra_broker(self): 
-        self.client.username_pw_set(self.MQTT_USERNAME, self.MQTT_PASSWORD)
-        self.client.on_subscribe = self.on_subscribe
-        self.client.on_message = self.on_message
-        self.client.connect(self.MQTT_URL, self.MQTT_PORT)
-        self.client.subscribe(self.settings, qos=1)
-        self.client.subscribe(self.inputs, qos=1)
-        self.client.subscribe(self.outputs, qos=1)
-        self.client.subscribe(self.commands, qos=1)
-        self.client.loop_start()
+        self.username_pw_set(self.MQTT_USERNAME, self.MQTT_PASSWORD)
+        self.on_subscribe = self.on_subscribe
+        self.on_message = self.on_message
+        self.connect(self.MQTT_URL, self.MQTT_PORT)
+        self.subscribe(self.settings, qos=1)
+        self.subscribe(self.inputs, qos=1)
+        self.subscribe(self.outputs, qos=1)
+        self.subscribe(self.commands, qos=1)
+        self.loop_start()
 
     # def digitalRead(self, pin):
     def analogWrite(self,pin,value):
@@ -76,7 +79,7 @@ class tamra_node:
             frame=json.loads(command_frame)
             frame["out"][pin]=value
             print(frame)
-            self.client.publish(self.commands, json.dumps(frame) , qos=1)
+            self.publish(self.commands, json.dumps(frame) , qos=1)
             while not self.getOutputs:
                 pass
             self.getOutputs=False
@@ -95,7 +98,7 @@ class tamra_node:
             frame["out"][pin]=value
             print(frame)
             while not self.getOutputs:
-                self.client.publish(self.commands, json.dumps(frame) , qos=1)
+                self.publish(self.commands, json.dumps(frame) , qos=1)
                 start_time = time.time()   
                 duration =3
                 while (time.time() - start_time) < duration:
@@ -121,7 +124,7 @@ class tamra_node:
         frame["out"]=json.loads(self.preparecommands_frame) 
         print(frame) 
         while self.getOutputs == False  and sendingTimes > 0:
-            self.client.publish(self.commands, json.dumps(frame) , qos=1)
+            self.publish(self.commands, json.dumps(frame) , qos=1)
         ###timer
             print("we still here")
             print(f"sendingTimes= {sendingTimes}")
@@ -164,5 +167,5 @@ class tamra_node:
     def install_settings(self):
         JSON_frame= self.settings_frame
         JSON_frame["_applied"]=0
-        self.client.publish(self.settings, json.dumps(JSON_frame) , qos=1)
+        self.publish(self.settings, json.dumps(JSON_frame) , qos=1)
 
