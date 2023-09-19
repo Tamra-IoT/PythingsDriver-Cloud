@@ -115,18 +115,21 @@ class tamra_node:
             else:
                 print(f"Key {pin} is not defined as a digital output")
                 # return NULL
-    def sendCommandsFrame(self): 
+    def sendCommandsFrame(self,sendingTimes=3): 
         command_frame='{"out":{}}'
         frame=json.loads(command_frame)
         frame["out"]=json.loads(self.preparecommands_frame) 
         print(frame) 
-        while not self.getOutputs:
+        while self.getOutputs == False  and sendingTimes > 0:
             self.client.publish(self.commands, json.dumps(frame) , qos=1)
         ###timer
+            print("we still here")
+            print(f"sendingTimes= {sendingTimes}")
             start_time = time.time()   
             duration =3
-            while (time.time() - start_time) < duration:
+            while (time.time() - start_time) < duration :
                 pass
+            sendingTimes=sendingTimes-1
         self.getOutputs=False
         
 

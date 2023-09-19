@@ -23,7 +23,7 @@ pygame.time.wait(2000)
 # print(smart_home.settings_frame)
 
 while True:
-    smart_home.prepare_digitalWrite(D3,1)
+    smart_home.prepare_digitalWrite(D13,1)
     smart_home.prepare_digitalWrite(D5,255)
     smart_home.prepare_digitalWrite(D6,255)
     smart_home.prepare_digitalWrite(D9,1)
@@ -33,7 +33,7 @@ while True:
     # smart_home.prepare_digitalWrite(D13,1)
     smart_home.sendCommandsFrame()
     pygame.time.wait(3000)
-    smart_home.prepare_digitalWrite(D3,0)
+    smart_home.prepare_digitalWrite(D13,0)
     smart_home.prepare_digitalWrite(D5,0)
     smart_home.prepare_digitalWrite(D6,0)
     smart_home.prepare_digitalWrite(D9,0)
