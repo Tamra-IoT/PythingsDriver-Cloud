@@ -1,12 +1,20 @@
 from PythingsDriver import tamra_node
-import read_env_file
+# import read_env_file
+import env
 import time
 import pygame
 from ArduinoUNO import *
+import os
 # print(read_env_file.env_vars)
 motion_detector=A0
 
-smart_home=tamra_node(read_env_file.env_vars)
+# Define the path to the .env file (assuming it is in the same directory as this script)
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+
+# Read the .env file and collect its attributes 
+env_vars = env.read_env_file(env_path)
+
+smart_home=tamra_node(env_vars)
 smart_home.connect_tamra_broker()
 # print("smart_home.settings_frame")
 # print(smart_home.settings_frame)
@@ -24,7 +32,7 @@ while True:
     # smart_home.prepare_digitalWrite(D12,1)
     # smart_home.prepare_digitalWrite(D13,1)
     smart_home.sendCommandsFrame()
-    pygame.time.wait(500)
+    pygame.time.wait(3000)
     smart_home.prepare_digitalWrite(D3,0)
     smart_home.prepare_digitalWrite(D5,0)
     smart_home.prepare_digitalWrite(D6,0)
@@ -34,7 +42,7 @@ while True:
     # smart_home.prepare_digitalWrite(D12,0)
     # smart_home.prepare_digitalWrite(D13,0)
     smart_home.sendCommandsFrame()
-    pygame.time.wait(500)
+    pygame.time.wait(3000)
     
 
 # smart_home.pinMode(D9, OUTPUT)
