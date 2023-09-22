@@ -42,7 +42,7 @@ class tamra_node(mqtt.Client):
         begin = message.find("{")
         end = message.rfind("}")
         message_json=json.loads(message[begin:end+1]) 
-        print(message_json)
+        print(json.dumps(message_json))
         # print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))    
         if str(msg.topic) == self.inputs:
             self.inputs_frame=message_json
@@ -74,7 +74,7 @@ class tamra_node(mqtt.Client):
         JSON_frame= self.outputs_frame
         print(JSON_frame)
         if pin in JSON_frame:
-            print("Key "+pin+" is present in the dictionary")
+            # print("Key "+pin+" is present in the dictionary")
             command_frame='{"out":{}}'
             frame=json.loads(command_frame)
             frame["out"][pin]=value
@@ -111,7 +111,6 @@ class tamra_node(mqtt.Client):
     def prepare_digitalWrite(self,pin,value):
             JSON_frame= self.outputs_frame
             frame = json.loads(self.preparecommands_frame)
-            print(JSON_frame)
             if pin in JSON_frame:
                 frame[pin]=value
                 self.preparecommands_frame=json.dumps(frame)
