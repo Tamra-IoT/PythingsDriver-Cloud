@@ -1,3 +1,4 @@
+from ArduinoUNO import *
 json_settings= {
   "D2": {
     "modes": [
@@ -169,13 +170,27 @@ import json
 # print(json.dumps(thing))
 
 class tamra_thing:
-     def __init__(self,name, description,port,node_setting):
-        self.jsonFile={}
-        self.jsonFile["name"]=name
-        self.jsonFile["description"]=description
-        self.jsonFile["port"]=port
-        self.jsonFile["Port Setting"]={port:node_setting[port]}
-        
+  def thingType(self, port_mode):
+    if port_mode == 'o':
+      return 'output'
+    elif port_mode == 'i':
+      return 'input'
+    elif port_mode == 'p':
+      return 'pwm'
+    elif port_mode == 'a':
+      return 'analog'
+    
+  def __init__(self,name, description,port,node_setting):
+    self.jsonFile={}
+    self.jsonFile["name"]=name
+    self.jsonFile["description"]=description
+    self.jsonFile["type"]=self.thingType(node_setting[port]['mode'])
+    self.jsonFile["port"]=port
+    self.jsonFile["port-setting"]={port:node_setting[port]}
+      
+    
+
+    
 
 
 # thing["name"]="Red LED"
@@ -186,9 +201,9 @@ class tamra_thing:
 # thing["Port Setting"]=json_settings[port]
 # print(json.dumps(thing)
 things=[]          
-things.append(tamra_thing("Red LED","this LED can be turned on and turned off","D2", json_settings).jsonFile)
-things.append(tamra_thing("Red LED","this LED can be turned on and turned off","D2", json_settings).jsonFile)
-things.append(tamra_thing("Red LED","this LED can be turned on and turned off","D2", json_settings).jsonFile)
+things.append(tamra_thing("Red LED","this LED can be turned on and turned off",D11, json_settings).jsonFile)
+# things.append(tamra_thing("Blue LED","this LED can be turned on and turned off",D2, json_settings).jsonFile)
+# things.append(tamra_thing("black LED","this LED can be turned on and turned off",D2, json_settings).jsonFile)
 
 TamraDiscription={}
 
