@@ -1,2 +1,2 @@
-things.append(tamra_thing("Blue LED","this LED can be turned on and turned off",D2, json_settings).jsonFile)
-# things.append(tamra_thing("black LED","this LED can be turned on and turned off",D2, json_settings).jsonFile)
+    # smart_home.prepare_digitalWrite(D11,0)
+    # smart_home.prepare_digitalWrite(D12,0)

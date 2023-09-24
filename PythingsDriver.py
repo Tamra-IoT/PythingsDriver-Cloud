@@ -9,14 +9,14 @@ class tamra_node(mqtt.Client):
         super().__init__(client_id, clean_session, userdata, protocol)
         self._protocol = protocol  # Set the _protocol attribute    
         self.env = env
-        self.BACKEND_URL=env["BACKEND_URL"]
         self.MQTT_URL=env["MQTT_URL"]
         self.MQTT_PORT=int(env["MQTT_PORT"])
         self.MQTT_USERNAME=env["MQTT_USERNAME"]
         self.MQTT_PASSWORD=env["MQTT_PASSWORD"]
         self.NODE_ID=env["NODE_ID"]
         self.ACTIVATION_CODE=env["ACTIVATION_CODE"]
-        self.preamble=self.ACTIVATION_CODE+'/'+self.NODE_ID+'/'
+        # self.preamble=self.ACTIVATION_CODE+'/'+self.NODE_ID+'/'
+        self.preamble=self.NODE_ID+'/'
         self.inputs=self.preamble+'inputs'
         self.outputs=self.preamble+'outputs'
         self.settings=self.preamble+'settings'
