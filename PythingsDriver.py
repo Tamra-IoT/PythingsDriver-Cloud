@@ -90,22 +90,36 @@ class tamra_node(mqtt.Client):
 
 
     def digitalWrite(self,pin,value):
-        JSON_frame= self.outputs_frame
-        print(JSON_frame)
-        if pin in JSON_frame:
-            command_frame='{"out":{}}'
-            frame=json.loads(command_frame)
-            frame["out"][pin]=value
-            print(frame)
-            while not self.getOutputs:
-                self.publish(self.commands, json.dumps(frame) , qos=1)
-                start_time = time.time()   
-                duration =3
-                while (time.time() - start_time) < duration:
-                    pass
-            self.getOutputs=False
-        else:
-            print(f"Key {pin} is not defined as a digital output")
+            JSON_frame= self.outputs_frame
+            print(JSON_frame)
+            if pin in JSON_frame:
+                command_frame='{"out":{}}'
+                frame=json.loads(command_frame)
+                frame["out"][pin]=value
+                print(frame)
+                self.publish(self.commands, json.dumps(frame) , qos=2)
+            else:
+                print(f"Key {pin} is not defined as a digital output")
+
+
+
+    # def digitalWrite(self,pin,value):
+    #     JSON_frame= self.outputs_frame
+    #     print(JSON_frame)
+    #     if pin in JSON_frame:
+    #         command_frame='{"out":{}}'
+    #         frame=json.loads(command_frame)
+    #         frame["out"][pin]=value
+    #         print(frame)
+    #         while not self.getOutputs:
+    #             self.publish(self.commands, json.dumps(frame) , qos=1)
+    #             start_time = time.time()   
+    #             duration =3
+    #             while (time.time() - start_time) < duration:
+    #                 pass
+    #         self.getOutputs=False
+    #     else:
+    #         print(f"Key {pin} is not defined as a digital output")
             # return NULL
 
     def prepare_digitalWrite(self,pin,value):
